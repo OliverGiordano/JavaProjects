@@ -1,0 +1,107 @@
+import java.util.ArrayDeque;
+import java.util.Deque;
+
+class Main{
+	public static void main(String[] args){
+		Deque<Character> opporatorStack = new ArrayDeque<>();	
+		Deque<Double> numbersStack = new ArrayDeque<>(); 
+
+		String calculation = args[0];
+		
+		char currentOpp = '\0'; 
+
+		for(int i = 0; i < calculation.length(); i++){
+			switch(calculation.charAt(i)){
+				case '(':
+				case ')':
+				case '+':
+				case '-':
+				case '*':
+				case '/':
+					System.out.println(calculation.charAt(i));
+					if(currentOpp=='\0'){
+						currentOpp = calculation.charAt(i);
+					} else if(oppOneHasPrecedent(calculation.charAt(i), currentOpp)){
+						System.out.println("+++");
+						//System.out.println(currentOpp);
+						numbersStack.push(useOpp(calculation.charAt(i), numbersStack.pop(), 
+									(double)Integer.parseInt(String.valueOf(calculation.charAt(i+1)))));
+						currentOpp = calculation.charAt(i);
+						i++;
+					} else {
+						System.out.println(calculation.charAt(i) + ","+ calculation.charAt(i+1));
+						numbersStack.push(useOpp(currentOpp, numbersStack.pop(), 
+									numbersStack.pop()));
+						currentOpp = calculation.charAt(i);
+						System.out.println(numbersStack);
+					}
+					break;
+				default:
+					numbersStack.push((double)Integer.parseInt(String.valueOf(calculation.charAt(i))));	
+					System.out.println(numbersStack);
+					break;
+			}
+		}
+
+
+		//while(!opporatorStack.isEmpty()){
+		//	System.out.print(opporatorStack.pop() + ", ");
+		//}
+		//while(!numbersStack.isEmpty()){
+		//	System.out.print(numbersStack.pop() + ", ");
+		//}
+		numbersStack.push(useOpp(currentOpp, numbersStack.pop(), numbersStack.pop()));	
+		/*currentOpp = opporatorStack.pop(); 
+		while(!opporatorStack.isEmpty()){
+			if(oppOneHasPrecedent(currentOpp, opporatorStack.peek())){
+				numbersStack.push(useOpp(currentOpp, numbersStack.pop(), numbersStack.pop()));	
+				currentOpp = opporatorStack.pop();
+				System.out.println(numbersStack);
+			}
+
+			else{
+
+			}
+			//System.out.println("mfWhat");
+		}*/
+		//numbersStack.push(useOpp(currentOpp, numbersStack.pop(), numbersStack.pop()));
+
+		System.out.println(numbersStack);
+		System.out.println();
+	}
+
+	public static double useOpp(char opp, double numOne, double numTwo){
+		switch(opp){
+			case '+':
+				return (double)(numOne+numTwo);
+			case '-':
+				return (double)(numOne-numTwo);
+			case '*':
+				return (double)(numOne*numTwo);
+			case '/':
+				return (double)(numOne/numTwo);
+		}	
+		return 0.0;
+	}
+	
+	public static boolean oppOneHasPrecedent(char opp1, char opp2){
+		int opp1Prec = -1;
+		int opp2Prec = -1;
+		if(opp1 == '+' || opp1 == '-'){
+			opp1Prec = 1;
+		}	else {
+			opp1Prec = 2;
+		}
+		if(opp2 == '+' || opp2 == '-'){
+			opp2Prec = 1;
+		}	else {
+			opp2Prec = 2;
+		}
+		
+		if(opp1Prec >= opp2Prec){
+			return true;
+		}
+		return false;
+
+	}
+}
